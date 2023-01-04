@@ -1,0 +1,7 @@
+babybee: 
+  hp: 75
+  movelist: [bite, evade, pollinate, sting-stab]
+centipede:
+  hp: 200
+  movelist: [bite, feed, infect]
+
