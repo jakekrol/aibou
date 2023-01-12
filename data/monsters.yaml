@@ -1,7 +1,7 @@
 babybee: 
   hp: 75
-  movelist: [bite, evade, pollinate, sting-stab]
+  moveset: [bite, evade, honeyslurp, sting-stab]
 centipede:
   hp: 200
-  movelist: [bite, feed, infect]
+  moveset: [bite, feed, sting-stab]
 

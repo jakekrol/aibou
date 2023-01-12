@@ -3,6 +3,20 @@ import os
 #from pathlib import Path
 import yaml
 
+class Moveset():
+    ''' Store move data for a specific monster '''
+
+    def __init__(self, monster_name):
+        self.monster_name = monster_name
+        with open(f'{os.getcwd()}/../data/monsters.yaml', 'r') as file:
+           monster_data = yaml.safe_load(file)
+           self.move_names = monster_data[monster_name]['moveset']
+        with open(f'{os.getcwd()}/../data/moves.yaml', 'r') as file:
+            move_data = yaml.safe_load(file)
+            self.dict = dict()
+            for move in self.move_names:
+                self.dict[move] = move_data[move]
+
 class Monster():
 
     _instances = []
@@ -24,9 +38,10 @@ class Monster():
            data = yaml.safe_load(file)
            self.data = data[name]
         self.hp = self.data['hp']
-        self.movelist = self.data['movelist']
+        self.max_hp = self.hp
+        self.moveset = Moveset(self.name)
+        #self.movelist = self.data['movelist']
 
-        #self.name = Path(art_file).stem
         self._instances.append(self)
 
     def display(self):
@@ -60,12 +75,11 @@ class Boss(Monster):
         Monster.__init__(self, name)
         self.type = 'boss'
 
-#def load_art(art_file):
-#    with open(f'{os.getcwd()}/../art/{art_file}', 'r') as file:
-#        lines = []
-#        for line in file:
-#            lines.append(line)
-#        formatted_art = ''.join(lines)
-#        return formatted_art
+def create_partner(name):
+    global partner
+    partner = Partner(name)
 
+def create_boss(name):
+    global boss
+    boss = Boss(name)
 

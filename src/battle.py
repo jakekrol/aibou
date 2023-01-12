@@ -1,15 +1,22 @@
 import monster
 import screen
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+from monster import partner
+from monster import boss
+from screen import battlescreen
+from screen import qtescreen
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 import yaml
 import os
+import ai
 
 def deal_damage(monster, damage):
     monster.hp = monster.hp - damage
 
-def partner_turn(battlescreen, partner, boss):
+def partner_turn():
     move = battlescreen.prompt_move(partner)
-    qtescreen = screen.QTE()
-    with open(f'{os.getcwd()}/../data/attacks.yaml', 'r') as file:
+    qtescreen = screen.QTEScreen()
+    with open(f'{os.getcwd()}/../data/moves.yaml', 'r') as file:
         data = yaml.safe_load(file)
         power = data[move]['power'] 
         skill = data[move]['skill'] 
@@ -24,23 +31,23 @@ def partner_turn(battlescreen, partner, boss):
     deal_damage(boss, damage)
     battlescreen.render_healthbar(partner, boss)
 
-def boss_turn(battlescreen, partner, boss):
+def start_turn():
+    partner_turn()
+    ai.simulate_turn(attacking_monster=boss, defending_monster=partner)
 
-
-def start_turn(battlescreen, partner, boss):
-    partner_turn(battlescreen, partner, boss)
-
-def battle(partner, boss):
+def battle():
+    battlescreen.render_monsters(partner, boss)
     while boss.hp > 0 and partner.hp > 0:
-        battlescreen = screen.Battle()
-        battlescreen.render_monsters(partner, boss)
+        #battlescreen = screen.BattleScreen()
         battlescreen.render_healthbar(partner, boss)
-        start_turn(battlescreen, partner, boss)
+        start_turn()
+        if partner.hp <= 0 or boss.hp <= 0:
+            break
 
     if boss.hp <= 0:
-        print(f'{boss.name} has been defeated!')
+        battlescreen.victory(partner, boss)
     elif partner.hp <= 0:
-        print(f'{boss.name} has been defeated!')
+        battlescreen.defeat(partner, boss)
     else:
         raise ValueError('Error: battle ended with neither monster losing '\
                 'their full hp.')

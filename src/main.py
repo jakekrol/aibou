@@ -1,7 +1,14 @@
-import battle
-#from battle import battle
 import monster
+import screen
 
-partner = monster.Partner('babybee')
-boss = monster.Boss('centipede')
-battle.battle(partner, boss)
+monster.create_partner('babybee')
+monster.create_boss('centipede')
+from monster import partner
+from monster import boss
+screen.make_battlescreen()
+screen.make_qtescreen()
+from screen import battlescreen
+from screen import qtescreen
+
+import battle
+battle.battle()

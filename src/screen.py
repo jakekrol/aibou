@@ -14,6 +14,8 @@ from time import sleep
 import keyboard # module requires root privleges; check bash_aliases for ex on testing
 import random
 import sys
+import termios
+from termios import tcflush, TCIFLUSH
 # ============================================================================== 
 # local modules
 import monster
@@ -34,25 +36,35 @@ class Menu(Screen):
 class Healthbar():
     
     def __init__(self, monster):
-        num_hearts = int(monster.hp // 20) # rounds down
+        max_hearts = int(monster.max_hp // 15)
+        num_hearts = int(monster.hp // 15) # rounds down
+        num_Xs = max_hearts - num_hearts 
 
         if monster.type == 'partner':
-            self.namecolor = 'blue'
+            self.namecolor = 'green'
         elif monster.type == 'boss':
-            self.namecolor = 'purple'
+            self.namecolor = 'red'
         else:
             raise ValueError(
                     'Bad value for monster.type during health bar ' \
                     'initializaiton.\nIs a Monster object being used for ' \
                     'battle instead of a Partner or Boss?'
                     )
+        # make final heart stay while monster is alive
+        if num_hearts == 0 and monster.hp > 0:
+            num_hearts = 1
+        # prevent negative hp on death
+        if monster.hp <= 0:
+            hp_text = '0'
+        else:
+            hp_text = str(monster.hp)
         nametext = Text(monster.name + ': ')
         nametext.stylize('italic ' + self.namecolor + ' on white')
-        hearttext = Text('\u2665' * num_hearts)
+        hearttext = Text(('\u2665' * num_hearts) + ('X' * num_Xs) + ' ' + hp_text)
         hearttext.stylize('red on white')
         self.text = nametext + hearttext
 
-class Battle(Screen):
+class BattleScreen(Screen):
 
     def __init__(self):
         Screen.__init__(self) 
@@ -73,9 +85,19 @@ class Battle(Screen):
         # fit monsters in layout height
         for monster in [partner, boss]:
             self.fit_monster(monster)
-        partner_render = Align(partner.text, align='left', vertical='bottom')
-        boss_render = Align(boss.text, align='right', vertical='top')
-        columns = Columns([partner_render, boss_render], expand=True)
+        self.partner_render = Align(partner.text, align='left', vertical='bottom')
+        self.boss_render = Align(boss.text, align='right', vertical='top')
+        columns = Columns([self.partner_render, self.boss_render], expand=True)
+        self.layout['middle'].update(Panel(columns))
+
+    def unrender_monster(self, monster):
+
+        if monster.type == 'partner':
+            columns = Columns([' ', self.boss_render], expand=True)
+        elif monster.type == 'boss':
+            columns = Columns([self.partner_render], ' ', expand=True)
+        else:
+            raise ValueError('wrong value for Monster.type')
         self.layout['middle'].update(Panel(columns))
 
     def render_healthbar(self, partner, boss):
@@ -93,55 +115,69 @@ class Battle(Screen):
         self.layout['upper'].update(Panel(columns))
         self.show()
 
-#    def add_partner(self, monster):
-#        # size screen for monsters
-#        pass
-#        self.fit_monster(monster)
-#        self.layout['middle'].update(
-#                Panel(
-#                    Align(
-#                        monster.text,
-#                        align='left',
-#                        vertical='bottom'
-#                    )
-#                )
-#        )
-#
-#    def add_boss(self, monster):
-#        # size screen for monsters
-#        self.fit_monster(monster)
-#        self.layout['rightmiddle'].update(
-#                Panel(
-#                    Align(
-#                    monster.text,
-#                    align='right',
-#                    vertical='top'
-#                    )
-#                )
-#        )
+    def show_move_usage(self, attacking_monster, selected_move):
+        self.layout['lower'].update(
+                Panel(f'{attacking_monster.name} uses {selected_move}')
+                )
+        self.show()
+        sleep(1.5)
+
 
     def prompt_move(self, monster):
+        tcflush(sys.stdin, TCIFLUSH)# clear stdin queue to prevent entering old key presses
+        move_data = monster.moveset.dict
         choices = dict()
         prompts = list()
-        for index,move in enumerate(monster.movelist):
+        for index,move in enumerate(monster.moveset.move_names):
             prompts.append(f'{index + 1}->{move}')
             choices[str(index + 1)] = move
         prompts = '\t\t'.join(prompts)
         self.layout['lower'].update(Panel(f"Choose an attack:\n{prompts}"))
         self.show()
-
-        selection = Prompt.ask(choices=choices.keys())
-        if selection in choices:
-            self.layout['lower'].update(
-                    Panel(f'{monster.name} uses {choices[selection]}')
+        def show_move_data(key):
+            print(f'\n{choices[key]}: {move_data[choices[key]]}')
+            tcflush(sys.stdin, TCIFLUSH)
+        for key in choices.keys():
+            keyboard.add_hotkey(
+                    f'i+{key}', show_move_data, args=[key]
                     )
+        selection = Prompt.ask(choices=choices.keys())
+                                
+        if selection in choices:
+            for key in choices.keys():
+                keyboard.remove_hotkey(f'i+{key}')
+            self.show_move_usage(monster, choices[selection])
         else:
             self.prompt_move(monster)
-        self.show()
-        sleep(1.5)
-        return choices[selection] # returns name of move
+        return choices[selection]
 
-class QTE(Screen):
+    def show_qte_outcome(self, monster, move, num_events, num_successes, damage, lifesteal=None):
+        if lifesteal == None:
+            message = f'{monster.name} passed {num_successes}/{num_events} skill '\
+                    f'checks and deals {damage} damage!'
+        else:
+            message = f'{monster.name} passed {num_successes}/{num_events} skill '\
+                    f'checks and deals {damage} damage and heals {lifesteal} hp!'
+
+        self.layout['lower'].update(Panel(message))
+        self.show()
+        sleep(2)
+
+    def victory(self, partner, boss):
+        self.unrender_monster(boss)
+        self.layout['lower'].update(
+                Panel(f'{partner.name} defeated {boss.name}!')
+        )
+        self.show()
+
+    def defeat(self, partner, boss):
+        self.unrender_monster(partner)
+        self.layout['lower'].update(
+                Panel(f'{partner.name} has been defeated.')
+        )
+        self.show()
+
+class QTEScreen(Screen):
     
     def __init__(self):
         Screen.__init__(self)
@@ -220,5 +256,10 @@ class QTE(Screen):
         self.show()
         return result_tally
 
+def make_battlescreen():
+    global battlescreen
+    battlescreen = BattleScreen() 
 
-
+def make_qtescreen():
+    global qtescreen
+    qtescreen = QTEScreen()
