@@ -3,35 +3,21 @@
 from rich import print
 from rich.layout import Layout
 from rich.layout import Panel
-from rich.padding import Padding
 from rich.prompt import Prompt
 from rich.align import Align
 from rich.columns import Columns
 from rich.text import Text
-#from rich.style import Style
-#from rich.console import Console
 from time import sleep
-import keyboard # module requires root privleges; check bash_aliases for ex on testing
-import random
+import keyboard 
 import sys
 import termios
 from termios import tcflush, TCIFLUSH
-# ============================================================================== 
-# local modules
-import monster
-import qte
-from qte import Event
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-class Screen():
-
-    def __init__(self):
-        self.layout = Layout()
-
-    def show(self):
-        print(self.layout)
-
-class Menu(Screen):
-    pass
+# local modules
+from aibou.src import monster
+from aibou.ui import screen
+from aibou.ui.screen import Screen
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 class Healthbar():
     
@@ -53,7 +39,7 @@ class Healthbar():
         # make final heart stay while monster is alive
         if num_hearts == 0 and monster.hp > 0:
             num_hearts = 1
-        # prevent negative hp on death
+        # prevent negative hp display on death
         if monster.hp <= 0:
             hp_text = '0'
         else:
@@ -177,89 +163,6 @@ class BattleScreen(Screen):
         )
         self.show()
 
-class QTEScreen(Screen):
-    
-    def __init__(self):
-        Screen.__init__(self)
-
-        self.layout.split_column(
-                Layout(name='eventspace'),
-                Layout(name='lower')
-                )
-        self.layout['lower'].size = 4
-
-    def start(self, power, num_events, event_time):
-        ''' Setup qte display and call qte functions for updates '''
-        result_tally = 0
-        for i in range(num_events):
-# ============================================================================== 
-            self.layout['lower'].update(Panel('Press the key!'))
-            sleep(1.5) # delay before event starts
-            character = qte.randomcharacter()
-            # display char
-            self.layout['eventspace'].update(
-                    Panel(
-                        Align(
-                            Padding(character, (1,1), style = 'on blue'),
-                            align=random.choice(['left', 'center', 'right']),
-                            vertical=random.choice(['top', 'middle', 'bottom'])
-                            )
-                        )
-                    )
-            self.show()
-
-            result, feedback = qte.runevent(character, event_time)
-            if result == 0:
-                self.layout['eventspace'].update(
-                        Panel(
-                            Align(
-                                Padding(feedback, (1,1), style = 'on red'),
-                                align='center',
-                                vertical='middle')
-                            )
-                        )
-                self.layout['lower'].update(
-                        Panel(
-                            Align(
-                                Padding('Fail', style = 'on red'),
-                                align='center',
-                                vertical='middle')
-                            )
-                        )
-            elif result == 1:
-                self.layout['eventspace'].update(
-                        Panel(
-                            Align(
-                                Padding(feedback, (1,1), style = 'on green'),
-                                align='center',
-                                vertical='middle')
-                            )
-                        )
-                self.layout['lower'].update(
-                        Panel(
-                            Align(
-                                Padding('Success!', style = 'on green'),
-                                align='center',
-                                vertical='middle')
-                            )
-                        )
-                result_tally += 1
-            else:
-                raise ValueError(
-                        'Unexpected value for <result>',
-                        result
-                        )
-            # display result
-            self.show()
-# ============================================================================== 
-        sleep(1.5) # pause and show final feedback before moving to damage step
-        self.show()
-        return result_tally
-
 def make_battlescreen():
     global battlescreen
     battlescreen = BattleScreen() 
-
-def make_qtescreen():
-    global qtescreen
-    qtescreen = QTEScreen()

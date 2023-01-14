@@ -1,9 +1,11 @@
-import monster
-import screen
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-from screen import battlescreen
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 import random
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# local 
+import monster
+from aibou.ui import screen
+from aibou.ui.battlescreen import battlescreen # load battlescreen instance into namespace
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 def get_move_data(attacking_monster):
     return attacking_monster.moveset.dict
@@ -33,7 +35,7 @@ def update_weight_dict(attacking_monster, skill_dict_with_move_lists, distribute
     remainder = 1 - sum_weights
     remainder_portion = remainder / total_moves_in_skill_dict
     if distribute_weight == 'select':
-        # distribute leftover weights to select moves ubiquitously
+        # distribute leftover weights to select moves 
         for move,weight in weight_dict.items():
             for skill,move_list in skill_dict_with_move_lists.items():
                 if move in move_list:
@@ -46,10 +48,13 @@ def update_weight_dict(attacking_monster, skill_dict_with_move_lists, distribute
     print('weight dict: ', weight_dict)
     return
 
-def check_weight_dict():
-    if sum(weight_dict.values()) != 1:
-        raise ValueError('move weights do not add to 1', weight_dict)
-    return
+def is_weight_dict_full():
+    if sum(weight_dict.values()) > 0.98 and sum(weight_dict.values()) < 1.02:
+        print('sum of weight_dict.values', sum(weight_dict.values()), weight_dict)
+        print('weight dict is full')
+        return True
+    else:
+        return False
 
 def check_kill(attacking_monster, defending_monster):
     ''' Adds weight to moves that can kill defending_monster '''
@@ -64,7 +69,10 @@ def check_kill(attacking_monster, defending_monster):
 
 def check_heal(attacking_monster):
     ''' Boss attempts to heal or dodge when below 50% hp '''
+    if is_weight_dict_full() == True:
+        return
     if attacking_monster.hp >= 0.5 * attacking_monster.max_hp:
+        print('check_heal() is running')
         return
     else: # add weights to healing and dodging moves
         move_data = get_move_data(attacking_monster)
@@ -93,13 +101,14 @@ def finalize_weight_dict(attacking_monster):
     If not, then this function will distribute the weights uniformly to each move.
     '''
     # if weights are not already one, distribute them uniformly
-    if sum(weight_dict.values()) < 0.98 or sum(weight_dict.values()) > 1.02:
+    if is_weight_dict_full() == False:
         moveset_dict = get_move_data(attacking_monster)
         total_moves = len(moveset_dict.keys())
         for move in moveset_dict.keys():
             weight_dict[move] += (1 / total_moves)
+        print('finalizing weight_dict', weight_dict)
     # final check for weights
-    if sum(weight_dict.values()) < 0.98 or sum(weight_dict.values()) > 1.02:
+    if is_weight_dict_full() == False:
         raise ValueError('ai move weights do not add to one', weight_dict)
     return
 

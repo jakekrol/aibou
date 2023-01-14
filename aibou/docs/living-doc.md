@@ -105,11 +105,14 @@ quick-time event
 
 - [x] Store art in individual text files and write code to easily handle monster
  conversion.
-- [ ] Create a handler for easy config of monster attacks. For example, attacks
+- [x] Create a handler for easy config of monster attacks. For example, attacks
 could be read from some sort of master data file that contains all monsters'
 attacks.
 
-- [ ] Add an `attacks` attribute to monster's that gets the attacks from a file.
+- [x] Add an `attacks` attribute to monster's that gets the attacks from a file.
+
+- [ ] Make qte call updates to qtescreen instead of looping over qtescreen's
+start function
 
 ### Handling input
 

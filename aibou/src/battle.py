@@ -1,22 +1,28 @@
-import monster
-import screen
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-from monster import partner
-from monster import boss
-from screen import battlescreen
-from screen import qtescreen
-#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# external
+import pathlib
 import yaml
 import os
 import ai
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# local
+import monster
+import aibou.ui.screen
+from aibou.ui.battlescreen import battlescreen
+from aibou.ui.qtescreen import qtescreen
+from monster import partner
+from monster import boss
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 def deal_damage(monster, damage):
     monster.hp = monster.hp - damage
 
 def partner_turn():
     move = battlescreen.prompt_move(partner)
-    qtescreen = screen.QTEScreen()
-    with open(f'{os.getcwd()}/../data/moves.yaml', 'r') as file:
+    #qtescreen = screen.QTEScreen()
+    move_data_path = \
+            pathlib.Path(__file__).parent.parent.joinpath('data', 'moves.yaml')
+    with move_data_path.open('r') as file:
         data = yaml.safe_load(file)
         power = data[move]['power'] 
         skill = data[move]['skill'] 
