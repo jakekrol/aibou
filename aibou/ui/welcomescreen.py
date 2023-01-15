@@ -1,6 +1,9 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+import keyboard
+import os
 from rich.align import Align
 from rich.panel import Panel
+from rich.prompt import Prompt
 from rich import print
 import pathlib
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -14,10 +17,8 @@ class WelcomeScreen(Screen):
         Screen.__init__(self) 
         self.layout.ratio = 1
 
-
     def show(self, icon):
         print(icon)
-
 
 def make_title():
     title_ascii_path = \
@@ -34,9 +35,9 @@ def make_welcomescreen():
     return welcomescreen
 
 def welcome_text():
-    text = 'Welcome to Aibou,'\
-    'A turn-based monster battle game.\n'\
-    'Press space to begin.'
+    text = 'Welcome to Aibou, '\
+    'a turn-based monster battle game.\n'\
+    'Press Enter to begin.'
     return text
 
 def show_title():
@@ -49,7 +50,10 @@ def show_title():
                         vertical='middle')
                   )
     )
-    welcomescreen.pause(5)
+    #choose_partner()
+    keyboard.wait('enter')
 
-show_title()
+def choose_partner():
+    art_path = pathlib.Path(__file__).parent.parent.joinpath('monster-art')
+    partners = os.listdir(art_path)
 

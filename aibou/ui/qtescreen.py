@@ -25,7 +25,7 @@ class QTEScreen(Screen):
                 )
         self.layout['lower'].size = 4
 
-    def start(self, power, num_events, event_time):
+    def start(self, num_events, event_time):
         ''' Setup qte display and call qte functions for updates '''
         result_tally = 0
         for i in range(num_events):

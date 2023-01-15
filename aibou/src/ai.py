@@ -1,20 +1,22 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# external 
 import random
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local 
+import battlemechanics
 import monster
 from aibou.ui import screen
 from aibou.ui.battlescreen import battlescreen # load battlescreen instance into namespace
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
-def get_move_data(attacking_monster):
-    return attacking_monster.moveset.dict
+def get_move_data(attacker):
+    return attacker.moveset.dict
 
 def initialize_weight_dict():
     global weight_dict 
     weight_dict = dict()
 
-def update_weight_dict(attacking_monster, skill_dict_with_move_lists, distribute_weight='select'):
+def update_weight_dict(attacker, skill_dict_with_move_lists, distribute_weight='select'):
     ''' Update weight_dict based on move skill '''
     total_moves_in_skill_dict = 0 # initialize counter
     for move_list in skill_dict_with_move_lists.values():
@@ -42,7 +44,7 @@ def update_weight_dict(attacking_monster, skill_dict_with_move_lists, distribute
                     weight_dict[move] += remainder_portion
     elif distribute_weight == 'all':
         # distribute to all moves
-        move_data = get_move_data(attacking_monster)
+        move_data = get_move_data(attacker)
         for move, data in move_data.items():
             weight_dict[move] += remainder_portion
     print('weight dict: ', weight_dict)
@@ -56,26 +58,26 @@ def is_weight_dict_full():
     else:
         return False
 
-def check_kill(attacking_monster, defending_monster):
+def check_kill(attacker, defending_monster):
     ''' Adds weight to moves that can kill defending_monster '''
-    move_data = get_move_data(attacking_monster)
+    move_data = get_move_data(attacker)
     final_blows = {'easy': [], 'medium': [], 'hard': []}
     for move,data in move_data.items():
         weight_dict[move] = 0.0
         if move_data[move]['power'] >= defending_monster.hp:
             skill = data['skill']
             final_blows[skill].append(move)
-    update_weight_dict(attacking_monster, final_blows, distribute_weight='select')
+    update_weight_dict(attacker, final_blows, distribute_weight='select')
 
-def check_heal(attacking_monster):
+def check_heal(attacker):
     ''' Boss attempts to heal or dodge when below 50% hp '''
     if is_weight_dict_full() == True:
         return
-    if attacking_monster.hp >= 0.5 * attacking_monster.max_hp:
+    if attacker.hp >= 0.5 * attacker.max_hp:
         print('check_heal() is running')
         return
     else: # add weights to healing and dodging moves
-        move_data = get_move_data(attacking_monster)
+        move_data = get_move_data(attacker)
         heal_and_evade_moves = {'easy': [], 'medium': [], 'hard': []}
         for move,data in move_data.items():
             # check if there's a healing move
@@ -88,13 +90,13 @@ def check_heal(attacking_monster):
                 heal_and_evade_moves[data['skill']].append(move)
 
         update_weight_dict(
-                attacking_monster,
+                attacker,
                 heal_and_evade_moves,
                 distribute_weight='all'
                 )
         return
 
-def finalize_weight_dict(attacking_monster):
+def finalize_weight_dict(attacker):
     ''' 
     Finalizes weight_dict by checking if weights add to 1. In the case of
     a detected kill or detected heal, then the weights should already be 1.
@@ -102,7 +104,7 @@ def finalize_weight_dict(attacking_monster):
     '''
     # if weights are not already one, distribute them uniformly
     if is_weight_dict_full() == False:
-        moveset_dict = get_move_data(attacking_monster)
+        moveset_dict = get_move_data(attacker)
         total_moves = len(moveset_dict.keys())
         for move in moveset_dict.keys():
             weight_dict[move] += (1 / total_moves)
@@ -121,8 +123,8 @@ def choose_weighted_moves():
     selection = random.choices(options, weights=weights, k=1)[0]
     return selection
 
-def simulate_qte(selected_move, attacking_monster):
-    moveset_dict = get_move_data(attacking_monster)
+def simulate_qte(selected_move, attacker):
+    moveset_dict = get_move_data(attacker)
     move_data = moveset_dict[selected_move]
     max_damage = move_data['power']
     skill = move_data['skill']
@@ -141,42 +143,44 @@ def simulate_qte(selected_move, attacking_monster):
     for event in range(num_events):
         outcome = random.choices([0,1], weights=weights, k=1)[0] # get item from single element list
         success_count += outcome
-    damage = (success_count / num_events) * max_damage
-    return damage, success_count, num_events, damage
+    #damage = (success_count / num_events) * max_damage
+    #return damage, success_count, num_events, damage
+    return success_count
 
-def check_lifesteal(attacking_monster, selected_move):
-    move_data = get_move_data(attacking_monster)
+def check_lifesteal(attacker, selected_move):
+    move_data = get_move_data(attacker)
     try:
         lifesteal_portion = move_data[selected_move]['lifesteal_portion']
         return lifesteal_portion
     except KeyError:
         return None
 
-def simulate_turn(attacking_monster, defending_monster):
+def simulate_turn(attacker, defender):
     initialize_weight_dict()
-    check_kill(attacking_monster, defending_monster)
-    check_heal(attacking_monster)
-    finalize_weight_dict(attacking_monster)
+    check_kill(attacker, defender)
+    check_heal(attacker)
+    finalize_weight_dict(attacker)
     selection = choose_weighted_moves()
     print(weight_dict)
-    battlescreen.show_move_usage(attacking_monster, selection)
-    damage, success_count, num_events, damage = simulate_qte(
-            selection, attacking_monster
+    battlescreen.show_move_usage(attacker, selection)
+    success_count = simulate_qte(
+            selection, attacker
             )
-    lifesteal = check_lifesteal(attacking_monster, selection)
-    battlescreen.show_qte_outcome(
-            attacking_monster, selection, num_events, success_count, damage, lifesteal
-            )
-    ai_deal_damage(damage, attacking_monster, defending_monster, lifesteal)
-    battlescreen.render_healthbar(partner=defending_monster, boss=attacking_monster)
+    battlemechanics.resolve_move(attacker, defender, selection, success_count)
+    #lifesteal = check_lifesteal(attacker, selection)
+#    battlescreen.show_qte_outcome(
+#            attacker, selection, num_events, success_count, damage, lifesteal
+#            )
+#    ai_deal_damage(damage, attacker, defending_monster, lifesteal)
+    battlescreen.render_healthbar(partner=defender, boss=attacker)
     return
 
-def ai_deal_damage(damage, attacking_monster, defending_monster, lifesteal_portion):
-    defending_monster.hp -= damage
-    if lifesteal_portion != None:
-        heal_amount = lifesteal_portion * damage
-        attacking_monster.hp += heal_amount
-        if attacking_monster.hp > attacking_monster.max_hp: # prevent overhealing
-            attacking_monster.hp = attacking_monster.max_hp
-    return
+#def ai_deal_damage(damage, attacker, defending_monster, lifesteal_portion):
+#    defending_monster.hp -= damage
+#    if lifesteal_portion != None:
+#        heal_amount = lifesteal_portion * damage
+#        attacker.hp += heal_amount
+#        if attacker.hp > attacking_monster.max_hp: # prevent overhealing
+#            attacker.hp = attacking_monster.max_hp
+#    return
 

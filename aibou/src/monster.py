@@ -38,13 +38,15 @@ class Monster():
         self.name = name
         self.art_file = name + '.txt'
         self.alive = True
+        self.status = []
         art_file_path = art_path.joinpath(self.art_file)
         # get art 
         with art_file_path.open('r') as file:
             lines = []
             for line in file:
                 lines.append(line)
-            self.text = ''.join(lines)
+            # extra newline leaves space for move result pop-ups
+            self.text = '\n' + ''.join(lines)
         self.height = self.text.count('\n')
 
         # get monster data
@@ -76,7 +78,6 @@ class Monster():
     def update_hp(self, delta):
         self.hp = self.hp - delta
         check_health()
-
 
 class Partner(Monster):
 

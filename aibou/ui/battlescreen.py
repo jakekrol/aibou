@@ -75,9 +75,9 @@ class BattleScreen(Screen):
         self.boss_render = Align(boss.text, align='right', vertical='top')
         columns = Columns([self.partner_render, self.boss_render], expand=True)
         self.layout['middle'].update(Panel(columns))
+        return 
 
     def unrender_monster(self, monster):
-
         if monster.type == 'partner':
             columns = Columns([' ', self.boss_render], expand=True)
         elif monster.type == 'boss':
@@ -85,9 +85,39 @@ class BattleScreen(Screen):
         else:
             raise ValueError('wrong value for Monster.type')
         self.layout['middle'].update(Panel(columns))
+        return
+
+    def show_damage(self, partner, boss, target, damage):
+        partner_render = Text(partner.text)
+        boss_render = Text(boss.text)
+        if target == 'partner':
+            partner_render.append(f'-{str(damage)}', style='bold red')
+        elif target == 'boss':
+            boss_render.append(f'-{str(damage)}', style='bold red')
+        partner_render = Align(partner_render, align='left', vertical='bottom')
+        boss_render = Align(boss_render, align='right', vertical='top')
+        columns = Columns([partner_render, boss_render], expand=True)
+        self.layout['middle'].update(Panel(columns))
+        self.show()
+        self.pause(2)
+        self.render_monsters(partner, boss)
+
+    def show_heal(self, partner, boss, target, heal_amount):
+        partner_render = Text(partner.text)
+        boss_render = Text(boss.text)
+        if target == 'partner':
+            partner_render.append(f'+{str(heal_amount)}', style='bold green')
+        elif target == 'boss':
+            boss_render.append(f'+{str(heal_amount)}', style='bold green')
+        partner_render = Align(partner_render, align='left', vertical='bottom')
+        boss_render = Align(boss_render, align='right', vertical='top')
+        columns = Columns([partner_render, boss_render], expand=True)
+        self.layout['middle'].update(Panel(columns))
+        self.show()
+        self.pause(2)
+        self.render_monsters(partner, boss)
 
     def render_healthbar(self, partner, boss):
-
         partner_hp_render = Align(
                 Healthbar(partner).text,
                 align='left',
@@ -106,48 +136,43 @@ class BattleScreen(Screen):
                 Panel(f'{attacking_monster.name} uses {selected_move}')
                 )
         self.show()
-        sleep(1.5)
-
+        self.pause(1.5)
 
     def prompt_move(self, monster):
         tcflush(sys.stdin, TCIFLUSH)# clear stdin queue to prevent entering old key presses
         move_data = monster.moveset.dict
-        choices = dict()
-        prompts = list()
+        # initialize options dict and prompt list
+        options = {'0': 'evade'}
+        prompts = ['0->evade']
         for index,move in enumerate(monster.moveset.move_names):
             prompts.append(f'{index + 1}->{move}')
-            choices[str(index + 1)] = move
-        prompts = '\t\t'.join(prompts)
+            options[str(index + 1)] = move
+        prompts = '    '.join(prompts)
         self.layout['lower'].update(Panel(f"Choose an attack:\n{prompts}"))
         self.show()
         def show_move_data(key):
-            print(f'\n{choices[key]}: {move_data[choices[key]]}')
+            print(f'\n{options[key]}: {move_data[options[key]]}')
             tcflush(sys.stdin, TCIFLUSH)
-        for key in choices.keys():
+        for key in options.keys():
             keyboard.add_hotkey(
                     f'i+{key}', show_move_data, args=[key]
                     )
-        selection = Prompt.ask(choices=choices.keys())
+        selection = Prompt.ask(choices=options.keys())
                                 
-        if selection in choices:
-            for key in choices.keys():
+        if selection in options:
+            for key in options.keys():
                 keyboard.remove_hotkey(f'i+{key}')
-            self.show_move_usage(monster, choices[selection])
+            self.show_move_usage(monster, options[selection])
         else:
             self.prompt_move(monster)
-        return choices[selection]
+        return options[selection]
 
-    def show_qte_outcome(self, monster, move, num_events, num_successes, damage, lifesteal=None):
-        if lifesteal == None:
-            message = f'{monster.name} passed {num_successes}/{num_events} skill '\
-                    f'checks and deals {damage} damage!'
-        else:
-            message = f'{monster.name} passed {num_successes}/{num_events} skill '\
-                    f'checks and deals {damage} damage and heals {lifesteal} hp!'
-
+    def show_move_outcome(self, attacker, defender, move, num_events, num_successes, bonus_text):
+        message = f'{attacker.name} passed {num_successes}/{num_events} skill '\
+                'checks. ' + bonus_text
         self.layout['lower'].update(Panel(message))
         self.show()
-        sleep(2)
+        self.pause(3)
 
     def victory(self, partner, boss):
         self.unrender_monster(boss)
