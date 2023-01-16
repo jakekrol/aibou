@@ -12,12 +12,15 @@ burrow:
   event_time: 1
   efficacy: 0.7
 evade:
-  type: [evade]
+  type: [status]
   power: 0
   skill: hard
   num_events: 5
   event_time: 1.2
-  efficacy: 0.8
+  effect:
+    type: evade
+    efficacy: 0.8
+    duration: 2
 feed:
   type: [damage, lifesteal]
   power: 10

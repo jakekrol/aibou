@@ -20,6 +20,17 @@ class WelcomeScreen(Screen):
     def show(self, icon):
         print(icon)
 
+def render_monsters(self, partner, boss):
+    # fit monsters in layout height
+    for monster in [partner, boss]:
+        self.fit_monster(monster)
+    self.partner_render = Align(partner.text, align='left', vertical='bottom')
+    self.boss_render = Align(boss.text, align='right', vertical='top')
+    columns = Columns([self.partner_render, self.boss_render], expand=True)
+    self.layout['middle'].update(Panel(columns))
+    return 
+
+
 def make_title():
     title_ascii_path = \
             pathlib.Path(__file__).parent.joinpath('ui-art', 'aibou2.ascii')

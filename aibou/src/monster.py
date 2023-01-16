@@ -38,7 +38,7 @@ class Monster():
         self.name = name
         self.art_file = name + '.txt'
         self.alive = True
-        self.status = []
+        self.status = dict()
         art_file_path = art_path.joinpath(self.art_file)
         # get art 
         with art_file_path.open('r') as file:

@@ -143,8 +143,6 @@ def simulate_qte(selected_move, attacker):
     for event in range(num_events):
         outcome = random.choices([0,1], weights=weights, k=1)[0] # get item from single element list
         success_count += outcome
-    #damage = (success_count / num_events) * max_damage
-    #return damage, success_count, num_events, damage
     return success_count
 
 def check_lifesteal(attacker, selected_move):
@@ -167,20 +165,5 @@ def simulate_turn(attacker, defender):
             selection, attacker
             )
     battlemechanics.resolve_move(attacker, defender, selection, success_count)
-    #lifesteal = check_lifesteal(attacker, selection)
-#    battlescreen.show_qte_outcome(
-#            attacker, selection, num_events, success_count, damage, lifesteal
-#            )
-#    ai_deal_damage(damage, attacker, defending_monster, lifesteal)
     battlescreen.render_healthbar(partner=defender, boss=attacker)
     return
-
-#def ai_deal_damage(damage, attacker, defending_monster, lifesteal_portion):
-#    defending_monster.hp -= damage
-#    if lifesteal_portion != None:
-#        heal_amount = lifesteal_portion * damage
-#        attacker.hp += heal_amount
-#        if attacker.hp > attacking_monster.max_hp: # prevent overhealing
-#            attacker.hp = attacking_monster.max_hp
-#    return
-

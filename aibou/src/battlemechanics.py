@@ -8,9 +8,7 @@ import yaml
 # local
 import ai
 import monster
-#import aibou.ui.screen
 from aibou.ui.battlescreen import battlescreen
-#from aibou.ui.qtescreen import qtescreen
 from monster import partner
 from monster import boss
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -27,7 +25,6 @@ def resolve_heal(monster, power, num_events, num_successes):
     if (monster.hp + heal_amount) > monster.max_hp:
         # recalculate heal amount to be 
         heal_amount = monster.max_hp - monster.hp
-        monster.hp = monster.max_hp
     monster.hp += heal_amount
     return heal_amount
 
@@ -40,19 +37,20 @@ def resolve_lifesteal(attacker, selected_move):
     return lifesteal_portion
 
 def calc_evade_result(monster, base_evasion_stat, num_successes, num_events):
-   evasion_success_chance = base_evasion_stat * (num_successes / num_events)
-   weights = [evasion_success_chance, 1 - evasion_success_chance]
-   result = random.choices(['success', 'fail'], weights, k=1)
-   if result == 'success':
-       monster.status.append('evading')
-   return result
+    evasion_success_chance = base_evasion_stat * (num_successes / num_events)
+    weights = [evasion_success_chance, 1 - evasion_success_chance]
+    result = random.choices(['success', 'fail'], weights, k=1)[0]
+    return result
 
-def resolve_status():
-    monsters = [partner, boss]
-    for monster in monsters:
-        if monster.status:
-            if 'evading' in monster.status:
-                pass
+def resolve_evade(defender):
+    efficacy = defender.status['evading']['efficacy']
+    result = random.choices(['success', 'fail'], [efficacy, 1 - efficacy], k=1)[0]
+    defender.status['evading']['duration'] -= 1
+    if defender.status['evading']['duration'] == 0:
+    # remove evading status with dictionary comprehension filter
+        defender.status = \
+                {status:data for (status,data) in defender.status if status != 'evading'}
+    return result
 
 def resolve_move(attacker, defender, selection, num_successes):
     with move_data_path.open('r') as file:
@@ -63,6 +61,11 @@ def resolve_move(attacker, defender, selection, num_successes):
         num_events = move_data[selection]['num_events'] 
         # apply move and print outcome to screen
         if 'damage' in move_type:
+            if 'evading' in defender.status.keys():
+                result = resolve_evade(defender)
+                battlescreen.show_evade_outcome(attacker, defender, selection, result)
+                if result == 'success':
+                    return 
             damage = deal_damage(defender, power, num_events, num_successes)
             outcome_text = f'{attacker.name} dealt {damage} damage to {defender.name}!'
             target = defender.type
@@ -71,18 +74,21 @@ def resolve_move(attacker, defender, selection, num_successes):
                 lifesteal_portion = resolve_lifesteal(attacker, selection)
                 outcome_text = f'{attacker.name} dealt damage{damage} damage to {defender.name} '\
                 f'and healed {lifesteal_portion}!'
-        elif 'evade' in move_type:
-            efficacy = move_data[selection]['efficacy']
-            result = calc_evade_result(efficacy, num_successes, num_events)
-            outcome_text = f'The result of {attacker.name}\'s evade is a {result}'
         elif 'heal' in move_type:
             heal_amount = resolve_heal(attacker, power, num_events, num_successes)
             target = attacker.type
             battlescreen.show_heal(partner, boss, target, heal_amount)
             outcome_text = f'{attacker.name} healed {heal_amount}hp!'
         elif 'status' in move_type:
-            defending_monster.status.append(move_data['effect']['type'])
-            pass
+            if move_data[selection]['effect']['type'] == 'evade':
+                efficacy = move_data[selection]['effect']['efficacy']
+                duration = move_data[selection]['effect']['duration']
+                result = calc_evade_result(attacker, efficacy, num_successes, num_events)
+                if result == 'success':
+                    attacker.status['evading'] = {'efficacy': efficacy, 'duration': duration}
+                    outcome_text = f'{attacker.name} is evading for {duration} turns!'
+                elif result == 'fail':
+                    outcome_text = f'{attacker.name}\'s evasion attempt failed!'
         elif len(move_type) == 0:
             raise ValueError(f'The move, {selection}\'s type list is empty.')
         battlescreen.show_move_outcome(
