@@ -5,30 +5,18 @@ import pathlib
 import yaml
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
+from getdata import monster_data, move_data
 from aibou.ui.color import red, blue, green, yellow
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-
-art_path = pathlib.Path(__file__).parent.parent.joinpath('monster-art')
-data_path = pathlib.Path(__file__).parent.parent.joinpath('data')
-monster_data_path = data_path.joinpath('monsters.yaml')
-move_data_path = data_path.joinpath('moves.yaml')
-
-
 class Moveset():
     ''' Store move data for a specific monster '''
 
     def __init__(self, monster_name):
         self.monster_name = monster_name
-        with monster_data_path.open('r') as file:
-        #with open(f'{os.getcwd()}/../data/monsters.yaml', 'r') as file:
-           monster_data = yaml.safe_load(file)
-           self.move_names = monster_data[monster_name]['moveset']
-        with move_data_path.open('r') as file:
-        #with open(f'{os.getcwd()}/../data/moves.yaml', 'r') as file:
-            move_data = yaml.safe_load(file)
-            self.dict = dict()
-            for move in self.move_names:
-                self.dict[move] = move_data[move]
+        self.move_names = monster_data[monster_name]['moveset']
+        self.dict = dict()
+        for move in self.move_names:
+            self.dict[move] = move_data[move]
 
 class Monster():
 
@@ -39,26 +27,22 @@ class Monster():
         self.art_file = name + '.txt'
         self.alive = True
         self.status = dict()
-        art_file_path = art_path.joinpath(self.art_file)
         # get art 
+        art_path = pathlib.Path(__file__).parent.parent.joinpath('monster-art')
+        art_file_path = art_path.joinpath(self.art_file)
         with art_file_path.open('r') as file:
             lines = []
             for line in file:
                 lines.append(line)
-            # extra newline leaves space for move result pop-ups
-            self.text = '\n' + ''.join(lines)
+        # extra newline leaves space for move result pop-ups
+        self.text = '\n' + ''.join(lines)
         self.height = self.text.count('\n')
 
         # get monster data
-        data_file_path = data_path.joinpath('monsters.yaml')
-        with monster_data_path.open('r') as file:
-        #with open(f'{os.getcwd()}/../data/monsters.yaml', 'r') as file:
-           data = yaml.safe_load(file)
-           self.data = data[name]
+        self.data = monster_data[name]
         self.hp = self.data['hp']
         self.max_hp = self.hp
         self.moveset = Moveset(self.name)
-        #self.movelist = self.data['movelist']
 
         self._instances.append(self)
 
