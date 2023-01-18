@@ -17,7 +17,32 @@ def initialize_weight_dict():
     weight_dict = dict()
 
 def update_weight_dict(attacker, skill_dict_with_move_lists, distribute_weight='select'):
-    ''' Update weight_dict based on move skill '''
+    ''' 
+    Update weight_dict based on moves skill 
+    
+    Parameters
+    -----
+
+    attacker [obj Monster] - The attacking monster
+
+    skill_dict_with_move_lists [dict] - A dictionary with skills and 
+    moves as values. 
+
+    distribute_weight [string] - A string of either 'select' or 'all'
+
+    Key Variables
+    -----
+
+    weight_dict [global dict] - Dictionary with moves as keys and weights as 
+    values. Weight assignment is guided through control flow until values sum 
+    to 1.
+    
+    remainder - One minus the sum of weights already assigned. 
+
+    remainder portion - Used to distribute weights. It's value is the 
+    quotient of the remainder divided by the number of moves that will recieve 
+    the portion.
+    '''
     total_moves_in_skill_dict = 0 # initialize counter
     for move_list in skill_dict_with_move_lists.values():
         total_moves_in_skill_dict += len(move_list)
@@ -35,8 +60,8 @@ def update_weight_dict(attacker, skill_dict_with_move_lists, distribute_weight='
                 pass
     sum_weights = sum(weight_dict.values())
     remainder = 1 - sum_weights
-    remainder_portion = remainder / total_moves_in_skill_dict
     if distribute_weight == 'select':
+        remainder_portion = remainder / total_moves_in_skill_dict
         # distribute leftover weights to select moves 
         for move,weight in weight_dict.items():
             for skill,move_list in skill_dict_with_move_lists.items():
@@ -45,6 +70,7 @@ def update_weight_dict(attacker, skill_dict_with_move_lists, distribute_weight='
     elif distribute_weight == 'all':
         # distribute to all moves
         move_data = get_move_data(attacker)
+        remainder_portion = remainder / len(move_data.keys())
         for move, data in move_data.items():
             weight_dict[move] += remainder_portion
     print('weight dict: ', weight_dict)
@@ -155,11 +181,12 @@ def check_lifesteal(attacker, selected_move):
 
 def simulate_turn(attacker, defender):
     initialize_weight_dict()
-    check_kill(attacker, defender)
-    check_heal(attacker)
-    finalize_weight_dict(attacker)
-    selection = choose_weighted_moves()
-    print(weight_dict)
+    while is_weight_dict_full() == False:
+        check_kill(attacker, defender)
+        check_heal(attacker)
+        finalize_weight_dict(attacker)
+        selection = choose_weighted_moves()
+        print(weight_dict)
     battlescreen.show_move_usage(attacker, selection)
     success_count = simulate_qte(
             selection, attacker
