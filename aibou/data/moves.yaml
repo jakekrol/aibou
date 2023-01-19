@@ -1,16 +1,19 @@
 bite:
   type: [damage]
-  power: 30
+  power: 60
   skill: medium
   num_events: 2
   event_time: 2
 burrow:
-  type: [evade]
+  type: [status]
   power: 0
   skill: hard
   num_events: 1
   event_time: 1
-  efficacy: 0.7
+  effect:
+    type: evade
+    efficacy: 0.7
+    duration: 2
 evade:
   type: [status]
   power: 0
@@ -23,14 +26,14 @@ evade:
     duration: 2
 feed:
   type: [damage, lifesteal]
-  power: 10
+  power: 40
   skill: easy
   num_events: 1
   event_time: 3
   lifesteal_portion: 0.5
 honeyslurp:
   type: [heal]
-  power: 50
+  power: 70
   skill: medium
   num_events: 3
   event_time: 1.8
@@ -47,12 +50,12 @@ infect:
 kill:
   type: [damage]
   power: 10000
-  skill: hard
+  skill: easy
   num_events: 1
   event_time: 1
 sting-stab:
   type: [damage]
-  power: 50
+  power: 100
   skill: hard
   num_events: 1
   event_time: 1

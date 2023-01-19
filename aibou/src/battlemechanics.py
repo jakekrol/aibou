@@ -25,9 +25,9 @@ def resolve_heal(monster, power, num_events, num_successes):
     monster.hp += heal_amount
     return heal_amount
 
-def resolve_lifesteal(attacker, selected_move):
+def resolve_lifesteal(attacker, selected_move, damage):
     lifesteal_portion = move_data[selected_move]['lifesteal_portion']
-    attacker.hp += lifesteal_portion
+    attacker.hp += lifesteal_portion * damage
     # prevent overhealing
     if attacker.hp > attacker.max_hp:
         attacker.hp = attacker.max_hp
@@ -43,11 +43,13 @@ def resolve_evade(defender):
     efficacy = defender.status['evading']['efficacy']
     result = random.choices(['success', 'fail'], [efficacy, 1 - efficacy], k=1)[0]
     defender.status['evading']['duration'] -= 1
+    duration = defender.status['evading']['duration']
     if defender.status['evading']['duration'] == 0:
     # remove evading status with dictionary comprehension filter
         defender.status = \
-                {status:data for (status,data) in defender.status if status != 'evading'}
-    return result
+                {status:info for (status,info) in defender.status.items() if status != 'evading'}
+
+    return result, duration
 
 def resolve_move(attacker, defender, selection, num_successes):
     move_type = move_data[selection]['type'] 
@@ -56,8 +58,8 @@ def resolve_move(attacker, defender, selection, num_successes):
     # apply move and print outcome to screen
     if 'damage' in move_type:
         if 'evading' in defender.status.keys():
-            result = resolve_evade(defender)
-            battlescreen.show_evade_outcome(attacker, defender, selection, result)
+            result, duration = resolve_evade(defender)
+            battlescreen.show_evade_outcome(attacker, defender, selection, result, duration)
             if result == 'success':
                 return 
         damage = deal_damage(defender, power, num_events, num_successes)
@@ -65,9 +67,9 @@ def resolve_move(attacker, defender, selection, num_successes):
         target = defender.type
         battlescreen.show_damage(partner, boss, target, damage)
         if 'lifesteal' in move_type:
-            lifesteal_portion = resolve_lifesteal(attacker, selection)
+            lifesteal_portion = resolve_lifesteal(attacker, selection, damage)
             outcome_text = f'{attacker.name} dealt {damage} damage to {defender.name} '\
-            f'and healed {lifesteal_portion}!'
+            f'and healed {lifesteal_portion * power}!'
     elif 'heal' in move_type:
         heal_amount = resolve_heal(attacker, power, num_events, num_successes)
         target = attacker.type

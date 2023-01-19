@@ -167,12 +167,21 @@ class BattleScreen(Screen):
             self.prompt_move(monster)
         return options[selection]
 
-    def show_evade_outcome(attacker, defender, move, result, duration):
+    def show_evade_outcome(self, attacker, defender, move, result, duration):
         if result == 'success':
-            message = f'{defender.name} successfully evaded {attacker.name}\'s'\
+            result_message = f'{defender.name} successfully evaded {attacker.name}\'s '\
                     f'{move}!'
         if result == 'fail':
-            message = f'{defender.name}\'s evade attempt failed!'
+            result_message = f'{defender.name}\'s evade attempt failed!'
+        if duration > 0:
+            duration_message = f'{defender.name} is evading for {duration} more '\
+                    f'turn(s).'
+        if duration == 0:
+            duration_message = f'{defender.name} is no longer evading.'
+        message = result_message + '\n' + duration_message
+        self.layout['lower'].update(Panel(message))
+        self.show()
+        self.pause(3)
 
     def show_move_outcome(self, attacker, defender, move, num_events, num_successes, bonus_text):
         message = f'{attacker.name} passed {num_successes}/{num_events} skill '\

@@ -1,13 +1,13 @@
 babybee: 
-  hp: 75
+  hp: 175
   evasion: 0.8
   moveset: [bite, honeyslurp, sting-stab]
 centipede:
-  hp: 200
+  hp: 500
   evasion: 0.7
-  moveset: [bite, feed, sting-stab]
+  moveset: [bite, burrow, feed, sting-stab]
 hornet:
-  hp: 150
+  hp: 250
   pre_evo: babybee
   moveset: [pheromone-sting, crystallized-lather]
 
