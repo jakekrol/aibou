@@ -13,9 +13,10 @@ def battle():
         #battlescreen = screen.BattleScreen()
         battlescreen.render_healthbar(partner, boss)
         partnerturn.partner_turn()
-        ai.simulate_turn(attacker=boss, defender=partner)
+        # break if either monster is at or below 0 hp after partner turn
         if partner.hp <= 0 or boss.hp <= 0:
             break
+        ai.simulate_turn(attacker=boss, defender=partner)
 
     if boss.hp <= 0:
         battlescreen.victory(partner, boss)
