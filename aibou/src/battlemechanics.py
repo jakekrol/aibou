@@ -82,7 +82,8 @@ def resolve_move(attacker, defender, selection, num_successes):
             result = calc_evade_result(attacker, efficacy, num_successes, num_events)
             if result == 'success':
                 attacker.status['evading'] = {'efficacy': efficacy, 'duration': duration}
-                outcome_text = f'{attacker.name} is evading for {duration} turns!'
+                outcome_text = f'{attacker.name} will attempt to evade the next '\
+                        f'{duration} attacks!'
             elif result == 'fail':
                 outcome_text = f'{attacker.name}\'s evasion attempt failed!'
     elif len(move_type) == 0:
