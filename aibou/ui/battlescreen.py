@@ -43,12 +43,25 @@ class Healthbar():
         if monster.hp <= 0:
             hp_text = '0'
         else:
-            hp_text = str(monster.hp)
+            hp_text = str(round(monster.hp, 1))
         nametext = Text(monster.name + ': ')
         nametext.stylize('italic ' + self.namecolor + ' on white')
         hearttext = Text(('\u2665' * num_hearts) + ('X' * num_Xs) + ' ' + hp_text)
         hearttext.stylize('red on white')
-        self.text = nametext + hearttext
+        # add status text
+        if monster.status.keys():
+            if 'evading' in monster.status.keys():
+                statustext = Text('E')
+                statustext.stylize('italic white on purple')
+                # partner status on right of healthbar
+                if monster.type == 'partner':
+                    self.text = nametext + hearttext + ' ' + statustext
+                # boss status on left of health bar
+                if monster.type == 'boss':
+                    self.text = statustext + ' ' + nametext + hearttext
+        else:
+            self.text = nametext + hearttext
+
 
 class BattleScreen(Screen):
 
@@ -174,8 +187,8 @@ class BattleScreen(Screen):
         if result == 'fail':
             result_message = f'{defender.name}\'s evade attempt failed!'
         if duration > 0:
-            duration_message = f'{defender.name} is evading for {duration} more '\
-                    f'turn(s).'
+            duration_message = f'{defender.name} will attempt to evade {duration} more '\
+                    f'attack(s).'
         if duration == 0:
             duration_message = f'{defender.name} is no longer evading.'
         message = result_message + '\n' + duration_message
