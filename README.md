@@ -11,29 +11,37 @@ directory (~).
 
 Change to home directory
 
-`$ cd ~`
+`cd ~`
 
 Clone repo
 
-`$ git clone https://github.com/jakekrol/aibou.git`
+`git clone https://github.com/jakekrol/aibou.git`
 
 Change to game directory
 
-`$ cd aibou`
+`cd aibou`
 
-Setup environment to install game dependencies
+Create and activate virtual environment
 
-`$ conda create --prefix $PWD/aibou-env --file requirements.txt`
+`conda create --prefix $PWD/aibou-env && conda activate ./aibou-env/`
+
+Install the aibou package to the virtual environment.
+
+`./aibou-test-env/bin/python -m pip install -e .`
+
+Install external dependencies, too
+
+`./aibou-env/bin/pip3 install -r requirements.txt`
 
 Run the game (sudo is required for keyboard module)
 
-`$ sudo aibou-env/bin/python aibou/src/main.py`
+`sudo aibou-env/bin/python aibou/src/main.py`
 
 ## Optional
 
 optional bash alias
 
-`$ vim ~/.bash_aliases`
+`vi ~/.bash_aliases`
 
 add this line to .bash_aliases file
 
@@ -41,7 +49,7 @@ add this line to .bash_aliases file
 
 source the alias file
 
-`$ source ~/.bash_aliases`
+`source ~/.bash_aliases`
 
 Now, the game can be executed with `xaibou`. 
 

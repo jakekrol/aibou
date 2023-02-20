@@ -114,6 +114,16 @@ attacks.
 - [ ] Make qte call updates to qtescreen instead of looping over qtescreen's
 start function
 
+- [] Add rich tree of start evolutions to game info guide
+
+- [] Add the following options:
+    - [] 'menu' are options on the menu page
+    - [] 'story' are options prompted during story mode
+    - [] 'settings' are options on the settings page
+    - [] Difficulty [settings]
+    - [] Starter [story&settings]
+    - [] Quickplay V Story? [menu]
+
 ### Handling input
 
 - *Keyboard* module allows reading user input without having to press enter
