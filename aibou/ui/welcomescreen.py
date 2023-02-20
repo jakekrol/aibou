@@ -63,7 +63,7 @@ def set_menu_ui(welcomescreen_obj, title_art, description):
     welcomescreen_obj.layout['options'].split_column(
         Layout(name='quickplay'),
         Layout(name='story'),
-        Layout(name='options'),
+        Layout(name='settings'),
         Layout(name='info')
     )
     #
@@ -77,7 +77,7 @@ def set_menu_ui(welcomescreen_obj, title_art, description):
         )
     set_menu_option('quickplay', 'q', 'Quickplay')
     set_menu_option('story', 's', 'Story')
-    set_menu_option('options', 'o', 'Options')
+    set_menu_option('settings', 'o', 'Options')
     set_menu_option('info', 'i', 'Info')
     keyboard.add_hotkey('i', callback=info_option)
 
