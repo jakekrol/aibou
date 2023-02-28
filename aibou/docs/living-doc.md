@@ -144,3 +144,9 @@ run the program without having python or the pacakges installed.
 
 The user can reduce the damage received from boss attacks by passing 
 quick-time events.
+
+#### Feedback from Zuhair
+
+- [] Dazed status: QTE prompts are discolored or have a different font. 
+Skipping these keys will count as a success.
+- [] Robot starter

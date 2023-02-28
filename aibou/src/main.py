@@ -7,9 +7,9 @@ from getdata import monster_data, move_data
 
 from aibou.ui import battlescreen
 from aibou.ui import qtescreen
-from aibou.ui import welcomescreen
-# show welcome screen
-welcomescreen.show_title()
+from aibou.ui import homescreen
+# show home screen
+homescreen.show_title()
 # create monsters
 import monster
 monster.create_partner('babybee')
