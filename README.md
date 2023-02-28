@@ -27,7 +27,7 @@ Create and activate virtual environment
 
 Install the aibou package to the virtual environment.
 
-`./aibou-test-env/bin/python -m pip install -e .`
+`./aibou-env/bin/python -m pip install -e .`
 
 Install external dependencies, too
 
