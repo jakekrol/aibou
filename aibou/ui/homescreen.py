@@ -1,27 +1,20 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 import keyboard
-import os
 from rich.align import Align
 from rich.layout import Layout
-from rich.panel import Panel
-from rich.prompt import Prompt
 from rich.text import Text
-from rich import print
 import pathlib
-import webbrowser
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-from aibou.ui import screen
 from aibou.ui.screen import Screen
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
-
-home_art_path = pathlib.Path(__file__).parent.joinpath('ui-art')
+home_art_path = pathlib.Path(__file__).parent.joinpath('ui-art/home')
 
 class HomeScreen(Screen):
 
     def __init__(self):
-        Screen.__init__(self) 
+        Screen.__init__(self)
 
 #def render_monsters(self, partner, boss):
 #    # fit monsters in layout height
@@ -31,7 +24,7 @@ class HomeScreen(Screen):
 #    self.boss_render = Align(boss.text, align='right', vertical='top')
 #    columns = Columns([self.partner_render, self.boss_render], expand=True)
 #    self.layout['middle'].update(Panel(columns))
-#    return 
+#    return
 
 
 def load_art(filename):
@@ -113,7 +106,7 @@ def show_title():
     homescreen.show()
     #choose_partner()
     keyboard.wait('q')
-    
+
 #def make_welcomescreen():
 #    welcomescreen = WelcomeScreen()
 #    return welcomescreen
@@ -122,4 +115,3 @@ def show_title():
 #def choose_partner():
 #    art_path = pathlib.Path(__file__).parent.parent.joinpath('monster-art')
 #    partners = os.listdir(art_path)
-

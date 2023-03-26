@@ -7,24 +7,21 @@ from rich.prompt import Prompt
 from rich.align import Align
 from rich.columns import Columns
 from rich.text import Text
-from time import sleep
-import keyboard 
+import keyboard
 import sys
-import termios
 from termios import tcflush, TCIFLUSH
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local modules
 from aibou.src import monster
-from aibou.ui import screen
 from aibou.ui.screen import Screen
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 class Healthbar():
-    
+
     def __init__(self, monster):
         max_hearts = int(monster.max_hp // 15)
-        num_hearts = int(monster.hp // 15) # rounds down
-        num_Xs = max_hearts - num_hearts 
+        num_hearts = int(monster.hp // 15)
+        num_Xs = max_hearts - num_hearts
 
         if monster.type == 'partner':
             self.namecolor = 'green'
@@ -66,7 +63,7 @@ class Healthbar():
 class BattleScreen(Screen):
 
     def __init__(self):
-        Screen.__init__(self) 
+        Screen.__init__(self)
 
         self.layout.split_column(
                 Layout(name='upper'),
@@ -88,7 +85,7 @@ class BattleScreen(Screen):
         self.boss_render = Align(boss.text, align='right', vertical='top')
         columns = Columns([self.partner_render, self.boss_render], expand=True)
         self.layout['middle'].update(Panel(columns))
-        return 
+        return
 
     def unrender_monster(self, monster):
         if monster.type == 'partner':
@@ -171,7 +168,7 @@ class BattleScreen(Screen):
                     f'i+{key}', show_move_data, args=[key]
                     )
         selection = Prompt.ask(choices=options.keys())
-                                
+
         if selection in options:
             for key in options.keys():
                 keyboard.remove_hotkey(f'i+{key}')
@@ -219,4 +216,4 @@ class BattleScreen(Screen):
 
 def make_battlescreen():
     global battlescreen
-    battlescreen = BattleScreen() 
+    battlescreen = BattleScreen()

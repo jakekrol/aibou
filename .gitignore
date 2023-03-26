@@ -1,6 +1,20 @@
+# temp
 temp/
+tmp/
+
+# python
 aibou.egg-info/
 aibou-env/
 __pycache__/
 ipython-sessions/
 uitesting.py
+
+# pre-commit
+.pre-commit-config.yaml
+
+# docker
+docker/
+
+# dev notes; add later once refined
+dev-notes.md
+
