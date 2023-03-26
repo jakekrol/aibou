@@ -98,7 +98,7 @@ def set_menu_ui(title_art, description):
                   align='center', vertical='middle')
             )
 def show_title():
-    title_art = Text(load_art('aibou3.ascii'), '#2E8BC0')
+    title_art = Text(load_art('title.ascii'), '#2E8BC0')
     description = welcome_text()
     global homescreen
     homescreen = HomeScreen()
