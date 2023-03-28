@@ -89,7 +89,7 @@ def set_menu_ui(title_art, description):
     set_menu_option('story', load_art('story.ascii'))
     set_menu_option('config', load_art('config.ascii'))
     set_menu_option('info', load_art('info.ascii'))
-    #keyboard.add_hotkey('q', args='q', callback=info_option)
+    #keyboard.add_hotkey('q', args='q', callback=quickplay_option)
     keyboard.add_hotkey('i', args='i', callback=info_option)
     keyboard.add_hotkey('c', args='c', callback=info_option)
     keyboard.add_hotkey('o', args='o', callback=info_option)
@@ -97,7 +97,7 @@ def set_menu_ui(title_art, description):
             Align(Text('Created by Jake Krol (2023)', '#2E8BC0'),
                   align='center', vertical='middle')
             )
-def show_title():
+def start():
     title_art = Text(load_art('title.ascii'), '#2E8BC0')
     description = welcome_text()
     global homescreen
