@@ -1,18 +1,20 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # external
-import os
-import ai
 import yaml
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# std
+import os
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-import aibou.ui.screen
-from aibou.ui.battlescreen import battlescreen
-from aibou.ui.qtescreen import qtescreen
-import battlemechanics
-from getdata import monster_data, move_data
-import monster
-from monster import partner
-from monster import boss
+from . import ai
+from ..ui import screen
+from ..ui.battlescreen import battlescreen
+from ..ui.qtescreen import qtescreen
+from . import battlemechanics
+from .getdata import monster_data, move_data
+from . import monster
+from .monster import partner
+from .monster import boss
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 def deal_damage(monster, power, num_events, num_successes):
     monster.hp = monster.hp - (power * (num_events / num_successes))

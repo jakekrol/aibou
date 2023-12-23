@@ -1,10 +1,11 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-from monster import boss
-from monster import partner
-from aibou.ui.battlescreen import battlescreen
-import partnerturn
-import ai
+from .monster import boss
+from .monster import partner
+from ..ui import battlescreen
+from ..ui.battlescreen import battlescreen
+from . import partnerturn
+from . import ai
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 def battle():

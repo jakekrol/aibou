@@ -8,12 +8,14 @@ from rich.align import Align
 from rich.columns import Columns
 from rich.text import Text
 import keyboard
-import sys
 from termios import tcflush, TCIFLUSH
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# std
+import sys
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local modules
-from aibou.src import monster
-from aibou.ui.screen import Screen
+from ..battle import monster
+from .screen import Screen
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 class Healthbar():

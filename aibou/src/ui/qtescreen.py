@@ -1,17 +1,19 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # external packages
 import keyboard # module requires root privleges; check bash_aliases for ex on testing
-import random
 from rich.align import Align
 from rich.layout import Layout
 from rich.layout import Panel
 from rich.padding import Padding
 from rich import print
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# std
+import random
 from time import sleep
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local modules
-from aibou.ui.screen import Screen
-from aibou.src import qte
+from .screen import Screen
+from ..battle import qte
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 class QTEScreen(Screen):

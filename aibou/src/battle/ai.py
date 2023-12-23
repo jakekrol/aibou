@@ -1,10 +1,10 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-# external
+# std
 import random
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-import battlemechanics
-from aibou.ui.battlescreen import battlescreen # load battlescreen instance into namespace
+from .import battlemechanics
+from ..ui.battlescreen import battlescreen # load battlescreen instance into namespace
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
 def get_move_data(attacker):

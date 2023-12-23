@@ -1,5 +1,7 @@
 # living-doc.md
 
+*Outdated*
+
 # Aibou
 
 A tentative summary of the aibou project.

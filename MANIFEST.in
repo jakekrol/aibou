@@ -1,0 +1,4 @@
+include README.md
+include data/*
+include docs/*
+include ui/ui-art/*

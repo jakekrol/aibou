@@ -1,12 +1,15 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # external 
-import os
-import pathlib
 import yaml
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# std 
+import os
+import pathlib
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-from getdata import monster_data, move_data
-from aibou.ui.color import red, blue, green, yellow
+from . import getdata
+from .getdata import monster_data, move_data
+from ..ui.color import red, blue, green, yellow
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 class Moveset():
     ''' Store move data for a specific monster '''
@@ -28,7 +31,7 @@ class Monster():
         self.alive = True
         self.status = dict()
         # get art 
-        art_path = pathlib.Path(__file__).parent.parent.joinpath('monster-art')
+        art_path = pathlib.Path(__file__).parent.parent.parent.joinpath('data/monsters')
         art_file_path = art_path.joinpath(self.art_file)
         with art_file_path.open('r') as file:
             lines = []

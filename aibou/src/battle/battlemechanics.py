@@ -1,16 +1,18 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-# external
+# std
 import os
 import random
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# external
 import yaml
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-import ai
-import monster
-from aibou.ui.battlescreen import battlescreen
-from getdata import monster_data, move_data
-from monster import partner
-from monster import boss
+from . import ai
+from ..ui.battlescreen import battlescreen
+from . import monster
+from .getdata import monster_data, move_data
+from .monster import partner
+from .monster import boss
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 def deal_damage(monster, power, num_events, num_successes):
     damage = power * (num_successes / num_events)

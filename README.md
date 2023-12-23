@@ -1,55 +1,26 @@
-# Quickstart (Linux)
+# Aibou
 
-This setup requires you have both 
-[Conda](https://docs.conda.io/en/latest/miniconda.html#linux-installers) 
-and
-[git](https://git-scm.com/download/linux) 
-installed.
+## Quickstart
 
-By default, this setup will install the game folder under the user's home 
-directory (~).
+``` bash
+pip install aibou
+python -m aibou
+```
 
-Change to home directory
+## Linux
 
-`cd ~`
+``` bash
+# keyboard module requires root
+sudo su
+pip install aibou
+python -m aibou
+```
 
-Clone repo
+## Info
 
-`git clone https://github.com/jakekrol/aibou.git`
+Authored by [Jacob Krol](https://github.com/jakekrol)
 
-Change to game directory
+### Developer timeline
 
-`cd aibou`
-
-Create and activate virtual environment
-
-`conda create --prefix $PWD/aibou-env && conda activate ./aibou-env/`
-
-Install the aibou package to the virtual environment.
-
-`./aibou-env/bin/python -m pip install -e .`
-
-Install external dependencies, too
-
-`./aibou-env/bin/pip3 install -r requirements.txt`
-
-Run the game (sudo is required for keyboard module)
-
-`sudo aibou-env/bin/python aibou/src/main.py`
-
-## Optional
-
-optional bash alias
-
-`vi ~/.bash_aliases`
-
-add this line to .bash_aliases file
-
-`alias xaibou="cd ~/aibou && sudo aibou-env/bin/python aibou/src/main.py"`
-
-source the alias file
-
-`source ~/.bash_aliases`
-
-Now, the game can be executed with `xaibou`. 
-
+- Core game development: Winter break of 2022-2023
+- Develop and publish python package: Winter break of 2023-2024

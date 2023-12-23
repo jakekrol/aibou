@@ -1,15 +1,17 @@
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# external
 import keyboard
 from rich.align import Align
 from rich.layout import Layout
 from rich.text import Text
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# std
 import pathlib
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # local
-from aibou.ui.screen import Screen
+from .screen import Screen
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
-home_art_path = pathlib.Path(__file__).parent.joinpath('ui-art/home')
 
 class HomeScreen(Screen):
 
@@ -28,7 +30,8 @@ class HomeScreen(Screen):
 
 
 def load_art(filename):
-    art_path = home_art_path.joinpath(filename)
+    art_path = pathlib.Path(__file__).parent.parent.parent.joinpath('data/ui_art')
+    art_path = art_path.joinpath(filename)
     with art_path.open('r') as file:
         lines = []
         for line in file:

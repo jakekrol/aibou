@@ -3,13 +3,14 @@
 #   a variable accessible to other files via from getdata import VAR_NAME
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 # external
-import pathlib
 import yaml
 #\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+# std
+import pathlib
+#\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 
-#art_path = pathlib.Path(__file__).parent.parent.joinpath('monster-art')
 def load_monster_data():
-    data_path = pathlib.Path(__file__).parent.parent.joinpath('data')
+    data_path = pathlib.Path(__file__).parent.parent.parent.joinpath('data/settings')
     monster_data_path = data_path.joinpath('monsters.yaml')
     with monster_data_path.open('r') as file:
        global monster_data
@@ -17,7 +18,7 @@ def load_monster_data():
        return monster_data
 
 def load_move_data():
-    data_path = pathlib.Path(__file__).parent.parent.joinpath('data')
+    data_path = pathlib.Path(__file__).parent.parent.parent.joinpath('data/settings')
     move_data_path = data_path.joinpath('moves.yaml')
     with move_data_path.open('r') as file:
         global move_data
