@@ -25,6 +25,7 @@ python -m aibou
 ## Info
 
 [How to play](aibou/docs/how-to-play.md)
+
 [Developer guide](aibou/docs/dev-notes.md)
 
 Authored by [Jacob Krol](https://github.com/jakekrol)
