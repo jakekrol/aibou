@@ -1,5 +1,11 @@
 # Aibou
 
+A command-line-interface game built with python. The gameplay is turn-based with quick-time-events key presses (QTEs) which determine the efficacy of chosen moves. 
+
+![Screenshot of home menu](screenshots/home.png)
+
+![screenshot of gameplay](screenshots/battle_start.png)
+
 ## Quickstart
 
 ``` bash
@@ -17,6 +23,9 @@ python -m aibou
 ```
 
 ## Info
+
+[How to play](aibou/docs/how-to-play.md)
+[Developer guide](aibou/docs/dev-notes.md)
 
 Authored by [Jacob Krol](https://github.com/jakekrol)
 
