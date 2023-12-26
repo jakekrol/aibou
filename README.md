@@ -1,6 +1,6 @@
 # Aibou
 
-A command-line-interface game built with python. The gameplay is turn-based with quick-time-events key presses (QTEs) which determine the efficacy of chosen moves. 
+A command-line-interface game built with python. The gameplay is turn-based with key press quick-time-events (QTEs) that determine the efficacy of chosen moves. 
 
 ![Screenshot of home menu](screenshots/home.png)
 
